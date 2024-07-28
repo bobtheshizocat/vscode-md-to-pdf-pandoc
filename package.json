@@ -1,0 +1,191 @@
+{
+  "name": "md-to-pdf-pandoc",
+  "displayName": ".md to .pdf | pandoc",
+  "description": "\".md to .pdf | pandoc\" automatically converts Markdown files to PDF format upon saving, enhancing the Markdown workflow. To use this extension, ensure that you have Visual Studio Code 1.60.0 or higher and that Pandoc is installed on your system. The extension activates automatically when a Markdown file is opened in VS Code, and it can generate a PDF version either automatically upon saving or manually via a keyboard shortcut. Configuration options include automatic frontmatter addition, document title extraction, and customizable header and margin settings.",
+  "version": "0.0.1",
+  "publisher": "bobtheshizocat",
+  "icon": "icon/icon.png",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "keywords": [
+    "markdown",
+    "pdf",
+    "pandoc",
+    "export",
+    ".md",
+    ".pdf"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bobtheshizocat/vscode-md-to-pdf-pandoc.git"
+  },
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mdtopdfpandoc.convert",
+        "title": "Convert Markdown to PDF"
+      }
+    ],
+    "configuration": {
+      "title": "Markdown to PDF",
+      "properties": {
+        "mdtopdfpandoc.autoSaveEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically convert to PDF on save"
+        },
+        "mdtopdfpandoc.shortcutKey": {
+          "type": "string",
+          "default": "ctrl+alt+p",
+          "description": "Shortcut key for manual PDF conversion"
+        },
+        "mdtopdfpandoc.outputPath": {
+          "type": "string",
+          "default": "",
+          "description": "Set the output path for the PDF file (leave empty to use same directory as Markdown file)"
+        },
+        "mdtopdfpandoc.paperSize": {
+          "type": "string",
+          "default": "a4paper",
+          "enum": ["a4paper", "letterpaper", "a5paper", "b5paper"],
+          "description": "Set the paper size"
+        },
+        "mdtopdfpandoc.margins": {
+          "type": "object",
+          "default": {
+            "left": "3cm",
+            "right": "2cm",
+            "top": "2cm",
+            "bottom": "2cm"
+          },
+          "description": "Set the page margins",
+          "properties": {
+            "left": {
+              "type": "string",
+              "default": "3cm"
+            },
+            "right": {
+              "type": "string",
+              "default": "2cm"
+            },
+            "top": {
+              "type": "string",
+              "default": "2cm"
+            },
+            "bottom": {
+              "type": "string",
+              "default": "2cm"
+            }
+          }
+        },
+        "mdtopdfpandoc.language": {
+          "type": "string",
+          "default": "de-DE",
+          "description": "Set the document language"
+        },
+        "mdtopdfpandoc.standalone": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate a standalone document"
+        },
+        "mdtopdfpandoc.tableOfContents": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include a table of contents"
+        },
+        "mdtopdfpandoc.numberSections": {
+          "type": "boolean",
+          "default": false,
+          "description": "Number sections automatically"
+        },
+        "mdtopdfpandoc.includeHeader": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include a header in the document"
+        },
+        "mdtopdfpandoc.documentTitle": {
+          "type": "string",
+          "default": "",
+          "description": "Set the document title for the header (leave empty to use title from Markdown)"
+        },
+        "mdtopdfpandoc.extractTitleFromMarkdown": {
+          "type": "boolean",
+          "default": true,
+          "description": "Extract the title from Markdown metadata"
+        },
+        "mdtopdfpandoc.breakUrls": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable URL line breaks"
+        },
+        "mdtopdfpandoc.hyphensUrl": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable hyphenation for URLs"
+        },
+        "mdtopdfpandoc.addFrontmatter": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically add frontmatter to new Markdown files"
+        },
+        "mdtopdfpandoc.customPandocOptions": {
+          "type": "string",
+          "default": "",
+          "description": "Add custom Pandoc options"
+        },
+        "mdtopdfpandoc.resourcePath": {
+          "type": "string",
+          "default": ".",
+          "description": "Set the resource path for Pandoc (e.g., '.:images' for ./images)"
+        },
+        "mdtopdfpandoc.pdfEngine": {
+          "type": "string",
+          "default": "xelatex",
+          "enum": ["pdflatex", "lualatex", "xelatex", "latexmk", "tectonic", "wkhtmltopdf", "weasyprint", "prince", "context", "pdfroff"],
+          "description": "Set the PDF engine for Pandoc"
+        },
+        "mdtopdfpandoc.embedResources": {
+          "type": "boolean",
+          "default": false,
+          "description": "Embed resources in the output file"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "mdtopdfpandoc.convertWithShortcut",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorTextFocus && editorLangId == markdown"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.60.0",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^8.4.0",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
