@@ -2,6 +2,8 @@
 
 A Visual Studio Code extension that automatically converts Markdown files to PDF format using Pandoc.
 
+*Extension is not published. At the moment it needs to be packed manually after cloning the repo.*
+
 ## Features
 
 - Automatic conversion of Markdown to PDF on save
