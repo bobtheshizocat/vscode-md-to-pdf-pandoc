@@ -23,11 +23,23 @@ class MarkdownToPdfConverter {
 
         const pandocCommand = this.buildPandocCommand(inputPath, outputPath, document);
 
+        if (this.config.get('enableLogging')) {
+            console.log('Pandoc command:', pandocCommand);
+            vscode.window.showInformationMessage(`Pandoc command: ${pandocCommand}`);
+        }
+
         return new Promise((resolve, reject) => {
             exec(pandocCommand, (error, stdout, stderr) => {
                 if (error) {
+                    if (this.config.get('enableLogging')) {
+                        console.error('Pandoc error:', error);
+                        console.error('Pandoc stderr:', stderr);
+                    }
                     reject(new Error(`Error converting to PDF: ${error.message}`));
                     return;
+                }
+                if (stderr && this.config.get('enableLogging')) {
+                    console.warn('Pandoc stderr:', stderr);
                 }
                 resolve('Markdown converted to PDF successfully!');
             });
@@ -52,11 +64,6 @@ class MarkdownToPdfConverter {
         const resourcePath = this.config.get('resourcePath');
         if (resourcePath) {
             command += ` --resource-path=${resourcePath}`;
-        }
-        
-        const pdfEngine = this.config.get('pdfEngine');
-        if (pdfEngine) {
-            command += ` --pdf-engine=${pdfEngine}`;
         }
         
         if (this.config.get('embedResources')) {
@@ -172,19 +179,19 @@ function activate(context) {
 
     // Register event listener for file save
     vscode.workspace.onDidSaveTextDocument((document) => {
-            if (document.languageId === 'markdown' && vscode.workspace.getConfiguration('mdtopdfpandoc').get('autoSaveEnabled')) {
-                convertToPdf(document);
-            }
-        });
-    
-        // Register shortcut key
-        context.subscriptions.push(vscode.commands.registerCommand('mdtopdfpandoc.convertWithShortcut', () => {
-            const activeEditor = vscode.window.activeTextEditor;
-            if (activeEditor && activeEditor.document.languageId === 'markdown') {
-                convertToPdf(activeEditor.document);
-            }
-        }));
-    }
+        if (document.languageId === 'markdown' && vscode.workspace.getConfiguration('mdtopdfpandoc').get('autoSaveEnabled')) {
+            convertToPdf(document);
+        }
+    });
+
+    // Register shortcut key
+    context.subscriptions.push(vscode.commands.registerCommand('mdtopdfpandoc.convertWithShortcut', () => {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor && activeEditor.document.languageId === 'markdown') {
+            convertToPdf(activeEditor.document);
+        }
+    }));
+}
 
 function deactivate() {}
 
