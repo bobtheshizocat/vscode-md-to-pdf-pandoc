@@ -2,7 +2,7 @@
   "name": "md-to-pdf-pandoc",
   "displayName": ".md to .pdf | pandoc",
   "description": "\".md to .pdf | pandoc\" automatically converts Markdown files to PDF format upon saving, enhancing the Markdown workflow. To use this extension, ensure that you have Visual Studio Code 1.60.0 or higher and that Pandoc is installed on your system. The extension activates automatically when a Markdown file is opened in VS Code, and it can generate a PDF version either automatically upon saving or manually via a keyboard shortcut. Configuration options include automatic frontmatter addition, document title extraction, and customizable header and margin settings.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "bobtheshizocat",
   "icon": "icon/icon.png",
   "engines": {
