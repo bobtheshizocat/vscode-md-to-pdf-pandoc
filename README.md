@@ -7,12 +7,11 @@ A Visual Studio Code extension that automatically converts Markdown files to PDF
 - Automatic conversion of Markdown to PDF on save
 - Manual conversion via shortcut key (Ctrl+Alt+P / Cmd+Alt+P)
 - Customizable configuration options for PDF output
-- Automatic frontmatter addition to new Markdown files
 
 ## Requirements
 
 - Visual Studio Code 1.60.0 or higher
-- Pandoc installed on your system
+- Pandoc must be installed on your system. You can download and install it from [pandoc.org](https://pandoc.org/installing.html).
 
 ## Installation
 
@@ -37,58 +36,62 @@ You can manually convert a Markdown file to PDF using the shortcut key:
 
 ## Configuration
 
-You can customize the behavior of md-to-pdf-pandoc in your VS Code settings. Here's a comprehensive list of all available options:
+You can configure the extension in VS Code settings. Here are the available options with their default values:
 
-- `mdtopdfpandoc.autoSaveEnabled`: Enable/disable automatic conversion on save (default: true)
-- `mdtopdfpandoc.shortcutKey`: Shortcut key for manual PDF conversion (default: "ctrl+alt+p")
-- `mdtopdfpandoc.outputPath`: Set the output path for the PDF file (default: empty, uses same directory as Markdown file)
-- `mdtopdfpandoc.paperSize`: Set the paper size (default: "a4paper", options: "a4paper", "letterpaper", "a5paper", "b5paper")
-- `mdtopdfpandoc.margins`: Set the page margins (default: left: "3cm", right: "2cm", top: "2cm", bottom: "2cm")
-- `mdtopdfpandoc.language`: Set the document language (default: "de-DE")
-- `mdtopdfpandoc.standalone`: Generate a standalone document (default: true)
-- `mdtopdfpandoc.tableOfContents`: Include a table of contents (default: false)
-- `mdtopdfpandoc.numberSections`: Number sections automatically (default: false)
-- `mdtopdfpandoc.includeHeader`: Include a header in the document (default: true)
-- `mdtopdfpandoc.documentTitle`: Set the document title for the header (default: empty, uses title from Markdown)
-- `mdtopdfpandoc.extractTitleFromMarkdown`: Extract the title from Markdown metadata (default: true)
-- `mdtopdfpandoc.breakUrls`: Enable URL line breaks (default: true)
-- `mdtopdfpandoc.hyphensUrl`: Enable hyphenation for URLs (default: true)
-- `mdtopdfpandoc.addFrontmatter`: Automatically add frontmatter to new Markdown files (default: true)
-- `mdtopdfpandoc.customPandocOptions`: Add custom Pandoc options (default: empty)
+- `mdtopdfpandoc.autoSaveEnabled`: Enables automatic PDF creation on save. (Default: `true`)
+- `mdtopdfpandoc.shortcutKey`: Keyboard shortcut for manual PDF creation. (Default: `"ctrl+alt+p"`)
+- `mdtopdfpandoc.addFrontmatter`: Automatically adds a frontmatter block to new Markdown files. (Default: `true`)
+- `mdtopdfpandoc.standalone`: Generates a complete (standalone) document. (Default: `true`)
+- `mdtopdfpandoc.tableOfContents`: Adds a table of contents. (Default: `false`)
+- `mdtopdfpandoc.numberSections`: Automatically numbers sections. (Default: `false`)
+- `mdtopdfpandoc.language`: Sets the document language. (Default: `"de-DE"`)
+- `mdtopdfpandoc.breakUrls`: Enables line breaks for URLs. (Default: `true`)
+- `mdtopdfpandoc.includeHeader`: Activates the header. (Default: `true`)
+- `mdtopdfpandoc.documentTitle`: Sets the document title for the header. (Default: `""`)
+- `mdtopdfpandoc.extractTitleFromMarkdown`: Extracts the title from Markdown metadata. (Default: `true`)
+- `mdtopdfpandoc.outputPath`: Sets the storage location for the PDF file. (Default: `""` - same folder as Markdown file)
+- `mdtopdfpandoc.customPandocOptions`: Allows additional Pandoc options. (Default: `""`)
+- `mdtopdfpandoc.resourcePath`: Sets the resource path for Pandoc. (Default: `"."`)
+- `mdtopdfpandoc.embedResources`: Embeds resources in the output file. (Default: `false`)
+- `mdtopdfpandoc.enableLogging`: Enables logging of Pandoc commands and outputs. (Default: `false`)
+- `mdtopdfpandoc.paperSize`: Selects the paper format. (Default: `"a4paper"`)
+- `mdtopdfpandoc.margins`: Sets the page margins. (Default: `{ left: "3cm", right: "2cm", top: "2cm", bottom: "2cm" }`)
 
-To modify these settings, go to File > Preferences > Settings in VS Code, then search for "md-to-pdf-pandoc".
+## Example Configuration
 
-### Frontmatter
+Here's an example configuration in your `settings.json` file:
 
-When `mdtopdfpandoc.addFrontmatter` is enabled, the extension will automatically add the following frontmatter to new Markdown files:
-
-```yaml
----
-title: "Your Title"
-author: Your Name, Your First Name / ID / Organization / Student number
-date: "Current Date"
----
+```json
+{
+  "mdtopdfpandoc.autoSaveEnabled": true,
+  "mdtopdfpandoc.shortcutKey": "ctrl+alt+p",
+  "mdtopdfpandoc.addFrontmatter": true,
+  "mdtopdfpandoc.standalone": true,
+  "mdtopdfpandoc.tableOfContents": true,
+  "mdtopdfpandoc.numberSections": true,
+  "mdtopdfpandoc.language": "en-US",
+  "mdtopdfpandoc.includeHeader": true,
+  "mdtopdfpandoc.documentTitle": "My Document",
+  "mdtopdfpandoc.paperSize": "a4paper",
+  "mdtopdfpandoc.margins": {
+    "left": "2.5cm",
+    "right": "2.5cm",
+    "top": "2cm",
+    "bottom": "2cm"
+  },
+  "mdtopdfpandoc.enableLogging": true
+}
 ```
-
-You can customize this frontmatter in your Markdown files to set the document title, author, and date.
-
-## Advanced Usage
-
-### Custom Pandoc Options
-
-You can add custom Pandoc options using the `mdtopdfpandoc.customPandocOptions` setting. This allows you to further customize the PDF output beyond the provided settings. For example, you could add options to change the PDF engine, use a custom LaTeX template, or add filters.
-
-### Resource Handling
-
-The extension automatically sets the resource path to the current directory, allowing Pandoc to find local images and other resources referenced in your Markdown files.
 
 ## Troubleshooting
 
-If you encounter issues with the PDF conversion:
+If you're having problems with the extension:
 
-1. Ensure Pandoc is correctly installed and accessible from the command line.
-2. Check the VS Code output panel (View > Output, then select "Markdown to PDF" from the dropdown) for any error messages.
-3. Verify that your Markdown syntax is correct and that all referenced resources (like images) are available.
+1. Make sure Pandoc is correctly installed and can be called from the command line.
+2. Enable logging (`mdtopdfpandoc.enableLogging`) for detailed outputs.
+3. Check the VS Code output (View -> Output) for detailed error messages.
+4. If issues occur with image display, check the paths to your images and the `resourcePath` setting.
+5. If problems persist, please open an issue on the extension's GitHub page.
 
 ## Contributing
 
