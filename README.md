@@ -20,6 +20,7 @@ A Visual Studio Code extension that automatically converts Markdown files to PDF
 1. Install Visual Studio Code 1.60.0 or higher
 2. Install Pandoc on your system
 3. Install the md-to-pdf-pandoc extension from the VS Code Marketplace
+*Extension is not published. At the moment it needs to be packed manually after cloning the repo.*
 
 ## Usage
 
