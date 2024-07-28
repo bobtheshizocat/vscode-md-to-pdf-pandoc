@@ -4,11 +4,24 @@ const path = require('path');
 const yaml = require('js-yaml');
 const fs = require('fs');
 
+/**
+ * MarkdownToPdfConverter class
+ * Handles the conversion of Markdown files to PDF using Pandoc
+ */
 class MarkdownToPdfConverter {
+    /**
+     * Constructor for MarkdownToPdfConverter
+     * Initializes the configuration
+     */
     constructor() {
         this.config = vscode.workspace.getConfiguration('mdtopdfpandoc');
     }
 
+    /**
+     * Converts a Markdown document to PDF
+     * @param {vscode.TextDocument} document - The document to convert
+     * @returns {Promise<string>} A promise that resolves with a success message or rejects with an error
+     */
     async convertToPdf(document) {
         if (!document) {
             document = vscode.window.activeTextEditor.document;
@@ -46,6 +59,13 @@ class MarkdownToPdfConverter {
         });
     }
 
+    /**
+     * Builds the Pandoc command string
+     * @param {string} inputPath - Path to the input Markdown file
+     * @param {string} outputPath - Path for the output PDF file
+     * @param {vscode.TextDocument} document - The document being converted
+     * @returns {string} The complete Pandoc command string
+     */
     buildPandocCommand(inputPath, outputPath, document) {
         let command = `pandoc "${inputPath}" -o "${outputPath}"`;
     
@@ -82,6 +102,11 @@ class MarkdownToPdfConverter {
         return command;
     }
 
+    /**
+     * Builds the Pandoc command for including a header
+     * @param {vscode.TextDocument} document - The document being converted
+     * @returns {string} The Pandoc command string for including a header
+     */
     buildHeaderCommand(document) {
         let title;
         if (this.config.get('extractTitleFromMarkdown')) {
@@ -94,24 +119,33 @@ class MarkdownToPdfConverter {
             year: 'numeric', 
             month: 'long', 
             day: 'numeric' 
-        }).replace(/(\d+)\./, '$1.'); // Replace single dot with double dot for day
+        }).replace(/(\d+)\./, '$1.');
     
         const leftHeader = this.escapeLatex(title);
         const rightHeader = this.escapeLatex(date);
     
-        // Escape backslashes and quotes for shell command
         const escapedLeftHeader = leftHeader.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
         const escapedRightHeader = rightHeader.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
     
         return ` --variable=header-includes:"\\\\usepackage{fancyhdr}\\\\pagestyle{fancy}\\\\fancyhead[L]{${escapedLeftHeader}}\\\\fancyhead[C]{}\\\\fancyhead[R]{${escapedRightHeader}}"`;
     }
     
+    /**
+     * Escapes special LaTeX characters in a string
+     * @param {string} text - The text to escape
+     * @returns {string} The escaped text
+     */
     escapeLatex(text) {
         return text.replace(/[&%$#_{}~^\\]/g, '\\$&')
                    .replace(/\n/g, '\\\\')
-                   .replace(/[<>]/g, '{$&}');  // Wrap < and > in curly braces
+                   .replace(/[<>]/g, '{$&}');
     }
 
+    /**
+     * Extracts the title from Markdown content
+     * @param {string} content - The Markdown content
+     * @returns {string} The extracted title or 'Untitled' if not found
+     */
     extractTitleFromMarkdown(content) {
         const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---/;
         const match = content.match(frontmatterRegex);
@@ -127,11 +161,15 @@ class MarkdownToPdfConverter {
             }
         }
         
-        // Fallback to extracting from first heading if no title in frontmatter
         const titleMatch = content.match(/^#\s+(.*)$/m);
         return titleMatch ? titleMatch[1] : 'Untitled';
     }
 
+    /**
+     * Adds frontmatter to a new Markdown file
+     * @param {vscode.Uri} uri - The URI of the new file
+     * @returns {Promise<boolean>} A promise that resolves with true if frontmatter was added, false otherwise
+     */
     addFrontmatterToNewFile(uri) {
         if (!this.config.get('addFrontmatter')) return Promise.resolve(false);
 
@@ -152,6 +190,10 @@ date: "${new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long'
 
 let converter;
 
+/**
+ * Activates the extension
+ * @param {vscode.ExtensionContext} context - The extension context
+ */
 function activate(context) {
     console.log('Markdown to PDF extension is now active');
 
@@ -163,7 +205,6 @@ function activate(context) {
 
     context.subscriptions.push(disposable);
 
-    // Register event listener for file creation
     let fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.md');
     fileSystemWatcher.onDidCreate((uri) => {
         converter.addFrontmatterToNewFile(uri)
@@ -177,14 +218,12 @@ function activate(context) {
             });
     });
 
-    // Register event listener for file save
     vscode.workspace.onDidSaveTextDocument((document) => {
         if (document.languageId === 'markdown' && vscode.workspace.getConfiguration('mdtopdfpandoc').get('autoSaveEnabled')) {
             convertToPdf(document);
         }
     });
 
-    // Register shortcut key
     context.subscriptions.push(vscode.commands.registerCommand('mdtopdfpandoc.convertWithShortcut', () => {
         const activeEditor = vscode.window.activeTextEditor;
         if (activeEditor && activeEditor.document.languageId === 'markdown') {
@@ -193,8 +232,15 @@ function activate(context) {
     }));
 }
 
+/**
+ * Deactivates the extension
+ */
 function deactivate() {}
 
+/**
+ * Converts the current Markdown document to PDF
+ * @param {vscode.TextDocument} document - The document to convert
+ */
 async function convertToPdf(document) {
     try {
         const message = await converter.convertToPdf(document);
